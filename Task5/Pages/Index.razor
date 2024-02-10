@@ -1,0 +1,76 @@
+﻿@page "/"
+
+@inject Manager manager
+
+<h3>Users</h3>
+
+<input id="rate" type="number" min="0" max="10" step="0.25" onchange="@((ChangeEventArgs e)=> ChangeTypoRate(e.Value.ToString()))" />
+<input id="seed" type="number" onchange="@((ChangeEventArgs e)=> UpdateSeed(e.Value.ToString()))" />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Full name</th>
+            <th>Address</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in manager.DirtyUsers())
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Code</td>
+                <td>@p.GetFullName()</td>
+                <td>@p.GetFullAddress()</td>
+                <td>@p.GetPhone()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button type="button" class="btn btn-outline-primary" @onclick="LoadData">
+    Load More Data
+</button>
+<script>
+    document.getElementById("rate").addEventListener("change", function () {
+        let v = parseInt(this.value);
+        if (v < 0) this.value = 0;
+        if (v > 10) this.value = 10;
+    });
+</script>
+
+@code {
+    private int TypoRate = 1;
+    private void LoadData()
+    {
+        manager.AddUsers();
+    }
+
+    private void ChangeTypoRate(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return;
+        if (int.TryParse(s, out int count))
+        {
+            if (count < 0) count = 0;
+            else if (count > 10) count = 10;
+            TypoRate = count;
+            manager.UpdateTypoRate(count);
+        }
+    }
+
+    private void UpdateSeed(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return;
+        if (int.TryParse(s, out int seed))
+        {
+            manager = new Manager(seed, "en_US", TypoRate);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}
