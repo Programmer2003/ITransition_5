@@ -4,7 +4,7 @@ using Task5.Data;
 namespace Task5.Generators
 {
     delegate string AddressType();
-    internal class UserGenerator
+    public class UserGenerator
     {
         public string Locale { get; private set; }
         private Faker Faker { get; set; }

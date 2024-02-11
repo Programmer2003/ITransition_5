@@ -11,13 +11,14 @@
         }
         public void Set(string s) => Current = s;
         public string Get() => Current;
+        public int Length() => Value.Length;
         public void Update()
         {
             Current = Value;
         }
     }
 
-    internal class User
+    public class User
     {
         public int Id { get; private set; }
         public string Code { get; private set; }

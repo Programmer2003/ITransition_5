@@ -4,9 +4,9 @@ using Task5.Data;
 namespace Task5.Generators
 {
     delegate string TypoType(string s);
-    internal class TypoGenerator
+    public class TypoGenerator
     {
-
+        public float MaxLengthDiff { get; private set; } = 10;
         public float TypoRate { get; set; }
         public Faker Faker { get; set; }
         public TypoGenerator(float typoRate = 1.5f, string locale = "en_US")
@@ -18,6 +18,7 @@ namespace Task5.Generators
         public IEnumerable<User> ChangeUsers(IEnumerable<User> users)
         {
             Randomizer.Seed = new Random(0);
+            
             foreach (var user in users)
             {
                 user.Clear();
@@ -46,19 +47,18 @@ namespace Task5.Generators
         {
             var field = Faker.PickRandom(user.Fields); //Get Getters(Key) and Setters(Value)
             string s = field.Get();
-            //Console.WriteLine(s);
-            field.Set(MakeTypo(s));
+            field.Set(MakeTypo(s, field.Length()));
         }
 
-        private string MakeTypo(string str)
+        private string MakeTypo(string str, int startedLength)
         {
             List<TypoType> typos = new List<TypoType>() { SwapChars };
-            if (str.Length > 5)
+            if (str.Length > 5 && startedLength - str.Length < MaxLengthDiff)
             {
                 typos.Add(DeleteRandomChar);
             }
 
-            if (str.Length < 50)
+            if (str.Length - startedLength < MaxLengthDiff)
             {
                 typos.Add(AddRandomChar);
             }

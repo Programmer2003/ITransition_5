@@ -3,7 +3,7 @@ using Task5.Generators;
 
 namespace Task5.Data
 {
-    internal class Manager
+    public class Manager
     {
         public UserGenerator UserGenerator;
         public TypoGenerator TypoGenerator;
@@ -15,7 +15,7 @@ namespace Task5.Data
             UserGenerator = new UserGenerator(locale);
             TypoGenerator = new TypoGenerator(rate, locale);
             Locale = locale;
-            AddUsers(1);
+            AddUsers(20);
         }
 
         public void UpdateTypoRate(float newRate)
