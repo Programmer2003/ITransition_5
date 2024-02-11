@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Globalization;
 @inject Manager manager
 @inject Config config
 
@@ -6,8 +7,11 @@
 
 <div class="d-flex justify-content-between">
     <div>
-        <input id="rate" value="@TypoRate" @oninput="@((ChangeEventArgs e) => OnSliderChange(e.Value.ToString()))" type="range" style="width: 200px" class="form-range" min="0" max="10" step="0.25" />
-        <input id="rate-input" step="0.01" @bind="@TypoRate" @bind:event="oninput" type="number" style="width: 200px" class="form-control" min="0" max="1000" />
+        <input id="rate" type="range" class="form-range" min="0" max="10" step="0.25" value="@TypoRate.ToString().Replace(',','.')" @oninput="@((ChangeEventArgs e) => OnSliderChange(e.Value.ToString()))">
+        <div class="input-group mb-2">
+            <span class="input-group-text" id="inputGroup-sizing-default">Errors</span>
+            <input id="rate-input" step="0.01" @bind="@TypoRate" @bind:event="oninput" type="number" style="width: 200px" class="form-control" min="0" max="1000" />
+        </div>
     </div>
     <div>
         <select @bind="@Locale" class="form-select" style="width: 150px">
@@ -49,23 +53,7 @@
     </table>
 </InfiniteScroll>
 
-<script>
-    var range = document.getElementById('rate');
-    var field = document.getElementById('rate-input');
 
-    range.addEventListener('input', function (e) {
-        field.value = e.target.value;
-    });
-    field.addEventListener('input', function (e) {
-        range.value = e.target.value;
-    });
-
-    document.getElementById("rate-input").addEventListener("change", function () {
-        let v = parseInt(this.value);
-        if (v < 0) this.value = 0;
-        if (v > 1000) this.value = 1000;
-    });
-</script>
 
 @code {
     private int seed;
@@ -115,7 +103,7 @@
     private void OnSliderChange(string value)
     {
         if (string.IsNullOrWhiteSpace(value)) return;
-        if (float.TryParse(value, out float rate))
+        if (float.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out float rate))
         {
             TypoRate = rate;
         }
