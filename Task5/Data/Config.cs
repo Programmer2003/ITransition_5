@@ -15,6 +15,6 @@
 
         public readonly int DefaultSeed = 0;
         public readonly string DefaultLocale = "en_US";
-        public readonly float DefaultTypoRate = 1f;
+        public readonly float DefaultTypoRate = 1.5f;
     }
 }

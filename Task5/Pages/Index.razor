@@ -9,7 +9,7 @@
     <div>
         <input id="rate" type="range" class="form-range" min="0" max="10" step="0.25" value="@TypoRate.ToString().Replace(',','.')" @oninput="@((ChangeEventArgs e) => OnSliderChange(e.Value.ToString()))">
         <div class="input-group mb-2">
-            <span class="input-group-text" id="inputGroup-sizing-default">Errors</span>
+            <span class="input-group-text">Errors</span>
             <input id="rate-input" step="0.01" @bind="@TypoRate" @bind:event="oninput" type="number" style="width: 200px" class="form-control" min="0" max="1000" />
         </div>
     </div>
@@ -21,9 +21,12 @@
             }
         </select>
     </div>
-    <div class="">
+    <div>
+        <div class="input-group mb-2">
+            <span class="input-group-text">Seed</span>
+            <input style="width: 200px" @bind="@Seed" @bind:event="oninput" class="form-control" id="seed" type="number" />
         <button class="btn btn-primary" @onclick="RandomSeed">Random</button>
-        <input style="width: 200px" @bind="@Seed" @bind:event="oninput" class="form-control" id="seed" type="number" />
+        </div>
     </div>
 </div>
 <InfiniteScroll ObserverTargetId="observerTarger" ObservableTargetReached="(e)=>LoadData()">
