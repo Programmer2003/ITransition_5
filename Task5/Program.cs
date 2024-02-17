@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddTransient<Manager>();
+builder.Services.AddTransient<Export>();
 builder.Services.AddSingleton<Config>();
 
 var app = builder.Build();

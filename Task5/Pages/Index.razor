@@ -1,16 +1,20 @@
 ﻿@page "/"
 @using System.Globalization;
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject Manager manager
 @inject Config config
+@inject Export exporter
 
 <h3>Users</h3>
+
+
 
 <div class="d-flex justify-content-between">
     <div>
         <input id="rate" type="range" class="form-range" min="0" max="10" step="0.25" value="@TypoRate.ToString().Replace(',','.')" @oninput="@((ChangeEventArgs e) => OnSliderChange(e.Value.ToString()))">
         <div class="input-group mb-2">
             <span class="input-group-text">Errors</span>
-            <input id="rate-input" step="0.01" @bind="@TypoRate" @bind:event="oninput" type="number" style="width: 200px" class="form-control" min="0" max="1000" />
+            <input id="rate-input" step="0.01" @bind="@TypoRate" @bind:event="onchange" type="number" style="width: 200px" class="form-control" min="0" max="1000" />
         </div>
     </div>
     <div>
@@ -28,6 +32,11 @@
         <button class="btn btn-primary" @onclick="RandomSeed">Random</button>
         </div>
     </div>
+    <div>
+        <div class="input-group mb-2">
+            <button class="btn btn-primary" @onclick="CreateDocument"> Export To CSV</button>
+        </div>
+    </div>
 </div>
 <InfiniteScroll ObserverTargetId="observerTarger" ObservableTargetReached="(e)=>LoadData()">
     <table class="table table-striped">
@@ -41,7 +50,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in manager.DirtyUsers())
+            @foreach (var p in users)
             {
                 <tr>
                     <td>@p.Id</td>
@@ -59,6 +68,13 @@
 
 
 @code {
+    private async void CreateDocument()
+    {
+        MemoryStream csvStream = exporter.GetStream(users);
+        await JS.SaveAs("Data.csv", csvStream.ToArray());
+    }
+
+    public IEnumerable<User> users = Array.Empty<User>();
     private int seed;
     private int Seed
     {
@@ -117,22 +133,27 @@
         if (rate < 0) rate = 0;
         else if (rate > 1000) rate = 1000;
         manager.UpdateTypoRate(rate);
+        users = manager.DirtyUsers();
     }
 
     private void OnLocaleChange(string locale)
     {
         if (string.IsNullOrWhiteSpace(locale)) return;
         manager = new Manager(Seed, locale, TypoRate);
+        users = manager.DirtyUsers();
     }
 
     private void OnSeedChange(int seed)
     {
         manager = new Manager(Seed, Locale, TypoRate);
+        users = manager.DirtyUsers();
+
     }
 
     private void LoadData()
     {
         manager.AddUsers();
+        users = manager.DirtyUsers();
     }
 
     private void RandomSeed()

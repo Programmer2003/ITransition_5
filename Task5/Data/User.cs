@@ -22,9 +22,9 @@
     {
         public int Id { get; private set; }
         public string Code { get; private set; }
-        private ChangebleField FullName;
-        private ChangebleField FullAddress;
-        private ChangebleField Phone;
+        public ChangebleField FullName;
+        public ChangebleField FullAddress;
+        public ChangebleField Phone;
 
         public string GetFullName() => FullName.Current;
         public string GetFullAddress() => FullAddress.Current;
